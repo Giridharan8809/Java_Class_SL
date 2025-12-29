@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Management System</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        display: flex;
+        gap: 20px;
+    }
+
+    .form-box {
+        width: 300px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-box label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+    }
+
+    .form-box input {
+        width: 100%;
+        padding: 6px;
+        margin-top: 4px;
+    }
+
+    .form-box button {
+        width: 100%;
+        padding: 8px;
+        margin-top: 10px;
+        border: none;
+        background: #007bff;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .form-box button.delete {
+        background: #dc3545;
+    }
+
+    table {
+        width: 100%;
+        background: #fff;
+        border-collapse: collapse;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        background: #343a40;
+        color: #fff;
+    }
+
+    tr.selected {
+        background: #ffeeba;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Student Management System</h1>
+
+<div class="container">
+
+    <!-- FORM -->
+    <div class="form-box">
+        <label>Roll No</label>
+        <input type="number" id="roll">
+
+        <label>Name</label>
+        <input type="text" id="name">
+
+        <label>Mark 1</label>
+        <input type="number" id="m1">
+
+        <label>Mark 2</label>
+        <input type="number" id="m2">
+
+        <label>Mark 3</label>
+        <input type="number" id="m3">
+
+        <button onclick="addStudent()">Add Student</button>
+        <button class="delete" onclick="deleteStudent()">Delete Selected</button>
+    </div>
+
+    <!-- TABLE -->
+    <table id="studentTable">
+        <thead>
+            <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>M1</th>
+                <th>M2</th>
+                <th>M3</th>
+                <th>Total</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+
+<script>
+    // ARRAY to store students
+    let students = [];
+    let selectedIndex = -1;
+
+    // ADD STUDENT
+    function addStudent() {
+        let roll = document.getElementById("roll").value;
+        let name = document.getElementById("name").value;
+        let m1 = Number(document.getElementById("m1").value);
+        let m2 = Number(document.getElementById("m2").value);
+        let m3 = Number(document.getElementById("m3").value);
+
+        if (roll === "" || name === "") {
+            alert("Please fill all fields");
+            return;
+        }
+
+        let total = m1 + m2 + m3;
+        let average = (total / 3).toFixed(2);
+
+        // OBJECT
+        let student = {
+            roll, name, m1, m2, m3, total, average
+        };
+
+        students.push(student);
+        displayStudents();
+        clearFields();
+    }
+
+    // DISPLAY STUDENTS
+    function displayStudents() {
+        let tbody = document.querySelector("#studentTable tbody");
+        tbody.innerHTML = "";
+
+        for (let i = 0; i < students.length; i++) {
+            let s = students[i];
+
+            let row = `<tr onclick="selectRow(${i})">
+                <td>${s.roll}</td>
+                <td>${s.name}</td>
+                <td>${s.m1}</td>
+                <td>${s.m2}</td>
+                <td>${s.m3}</td>
+                <td>${s.total}</td>
+                <td>${s.average}</td>
+            </tr>`;
+
+            tbody.innerHTML += row;
+        }
+    }
+
+    // SELECT ROW
+    function selectRow(index) {
+        selectedIndex = index;
+        let rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(r => r.classList.remove("selected"));
+        rows[index].classList.add("selected");
+    }
+
+    // DELETE STUDENT
+    function deleteStudent() {
+        if (selectedIndex === -1) {
+            alert("Select a student to delete");
+            return;
+        }
+
+        // LOOP + ARRAY SHIFT
+        students.splice(selectedIndex, 1);
+        selectedIndex = -1;
+        displayStudents();
+    }
+
+    // CLEAR INPUTS
+    function clearFields() {
+        document.getElementById("roll").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("m1").value = "";
+        document.getElementById("m2").value = "";
+        document.getElementById("m3").value = "";
+    }
+</script>
+
+</body>
+</html>
